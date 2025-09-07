@@ -3,208 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration & Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        h2 {
-            text-align: center;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        input {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .toggle {
-            text-align: center;
-            margin-top: 10px;
-        }
-        .toggle button {
-            background: none;
-            color: #007bff;
-            border: none;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        #message {
-            text-align: center;
-            margin-top: 10px;
-            color: red;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+    <title>Registration & Sign-In Demo</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <div id="register-form">
+        <h1>Welcome to the Demo Site</h1>
+        
+        <!-- Registration Form -->
+        <div id="register-form" class="form-container">
             <h2>Register</h2>
             <form id="reg-form">
-                <input type="text" id="reg-username" placeholder="Username" required>
-                <input type="email" id="reg-email" placeholder="Email" required>
-                <input type="password" id="reg-password" placeholder="Password" required>
-                <input type="password" id="reg-confirm-password" placeholder="Confirm Password" required>
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+                
                 <button type="submit">Register</button>
             </form>
-            <div class="toggle">
-                Already have an account? <button onclick="showLogin()">Login</button>
-            </div>
+            <p>Already have an account? <button onclick="showSignIn()">Sign In</button></p>
+            <div id="reg-message" class="message"></div>
         </div>
         
-        <div id="login-form" class="hidden">
-            <h2>Login</h2>
-            <form id="log-form">
-                <input type="text" id="log-username" placeholder="Username" required>
-                <input type="password" id="log-password" placeholder="Password" required>
-                <button type="submit">Login</button>
+        <!-- Sign-In Form -->
+        <div id="signin-form" class="form-container" style="display: none;">
+            <h2>Sign In</h2>
+            <form id="signin-form">
+                <label for="signin-email">Email:</label>
+                <input type="email" id="signin-email" required>
+                
+                <label for="signin-password">Password:</label>
+                <input type="password" id="signin-password" required>
+                
+                <button type="submit">Sign In</button>
             </form>
-            <div class="toggle">
-                Don't have an account? <button onclick="showRegister()">Register</button>
-            </div>
+            <p>Don't have an account? <button onclick="showRegister()">Register</button></p>
+            <div id="signin-message" class="message"></div>
         </div>
-        
-        <div id="message"></div>
     </div>
-
-    <script>
-        // Toggle between forms
-        function showLogin() {
-            document.getElementById('register-form').classList.add('hidden');
-            document.getElementById('login-form').classList.remove('hidden');
-            clearMessage();
-        }
-
-        function showRegister() {
-            document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('register-form').classList.remove('hidden');
-            clearMessage();
-        }
-
-        // Clear message
-        function clearMessage() {
-            document.getElementById('message').textContent = '';
-        }
-
-        // Display message
-        function displayMessage(msg, color = 'red') {
-            const messageEl = document.getElementById('message');
-            messageEl.textContent = msg;
-            messageEl.style.color = color;
-        }
-
-        // Load users from localStorage
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('users')) || [];
-        }
-
-        // Save users to localStorage
-        function saveUsers(users) {
-            localStorage.setItem('users', JSON.stringify(users));
-        }
-
-        // Registration handler
-        document.getElementById('reg-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('reg-username').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const password = document.getElementById('reg-password').value;
-            const confirmPassword = document.getElementById('reg-confirm-password').value;
-
-            if (!username || !email || !password || !confirmPassword) {
-                displayMessage('All fields are required.');
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                displayMessage('Passwords do not match.');
-                return;
-            }
-
-            const users = getUsers();
-            if (users.some(user => user.username === username)) {
-                displayMessage('Username already exists.');
-                return;
-            }
-
-            users.push({ username, email, password }); // In real apps, hash the password!
-            saveUsers(users);
-            displayMessage('Registration successful! You can now login.', 'green');
-            showLogin(); // Switch to login after registration
-        });
-
-        // Login handler
-        document.getElementById('log-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('log-username').value.trim();
-            const password = document.getElementById('log-password').value;
-
-            if (!username || !password) {
-                displayMessage('All fields are required.');
-                return;
-            }
-
-            const users = getUsers();
-            const user = users.find(u => u.username === username && u.password === password);
-
-            if (user) {
-                displayMessage('Login successful!', 'green');
-                // In a real app, redirect or set session here
-                alert(`Welcome, ${username}!`);
-            } else {
-                displayMessage('Invalid username or password.');
-            }
-        });
-    </script>
-    <script type="module" defer>
-        // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDBw0ZIzZtsUJr5PnRZiv6VP27h3fUxAxM",
-    authDomain: "suahco4.firebaseapp.com",
-    projectId: "suahco4",
-    storageBucket: "suahco4.firebasestorage.app",
-    messagingSenderId: "953429512465",
-    appId: "1:953429512465:web:21fbaac17865c653f87cb0"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-
-    </script>
+<!-- Firebase SDK (CDN version for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+    <script src="script.js"></script>
+    <script type="module" src="registor.js" defer></script>
 </body>
 </html>
